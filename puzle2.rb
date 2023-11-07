@@ -5,7 +5,7 @@ require "thread"
 require_relative "Rfid.rb"
 
 
-    @ed = Gdk::RGBA::new(1.0,0,0,1.0)
+    @red = Gdk::RGBA::new(1.0,0,0,1.0)
     @blue = Gdk::RGBA::new(0,0,1.0,1.0)
     @white = Gdk::RGBA::new(1.0,1.0,1.0,1.0)
 
@@ -13,7 +13,7 @@ require_relative "Rfid.rb"
     @rf=Rfid.new
         
     @window = Gtk::Window.new("Lecotr Rfid")
-    @window.set_size_request(800,200)
+    @window.set_size_request(300,100)
     @window.set_border_width(7)
     @window.set_window_position(:center)
 
@@ -23,28 +23,35 @@ require_relative "Rfid.rb"
   
                  
     @label = Gtk::Label.new("Please, login with your university card")
-    @label.override_background_color(:normal, @@blue)
-    @label.override_color(:normal, @@white)
+    @label.override_background_color(:normal, @blue)
+    @label.override_color(:normal, @white)
 
     @grid.attach(@label, 0, 0, 2, 1)    
 
-    @clear_button = Gtk::Button.new(:label=>"clear") 
+    @clear_button = Gtk::Button.new(:label=>"Clear") 
 
     @grid.attach(@clear_button, 0, 1, 2, 1)
-
+    
+    @grid.set_row_homogeneous(true)
+    @grid.set_column_homogeneous(true)
+    
     @window.add(@grid)
 
-    thraux
+    
 
-    @clear_button.signal_connect("clicked") do
+    @clear_button.signal_connect "clicked" do 
 
-            if @uid != ""
+            
+                
+                #t.exit
+                
+                @uid = ""
 
                 @label.override_background_color(:normal,@blue)
                 @label.set_text("Please, login with your university card")
 
                thraux
-            end
+           
         end
 
     def thraux
@@ -56,13 +63,14 @@ require_relative "Rfid.rb"
         }
     end
     
+    thraux
 
     def read
 
         puts "reading"
 
         @uid = @rf.read_uid
-        Glib::Idle.add{show_uid}
+        GLib::Idle.add{show_uid}
         
     end
 
@@ -71,7 +79,7 @@ require_relative "Rfid.rb"
     
         if @uid != ""
             @label.override_background_color(:normal,@red)
-            @label.text=@uid.upcase
+            @label.text=@uid
         end
     end
 
